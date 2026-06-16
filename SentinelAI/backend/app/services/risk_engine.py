@@ -10,3 +10,10 @@ def calculate_risk(event_type: str):
         return 5, "low"
 
     return 20, "low"
+
+
+def should_generate_alert(
+    failed_login_count: int
+):
+
+    return failed_login_count >= 5

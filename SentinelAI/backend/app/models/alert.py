@@ -8,8 +8,8 @@ from sqlalchemy.sql import func
 from app.core.database import Base
 
 
-class Log(Base):
-    __tablename__ = "logs"
+class Alert(Base):
+    __tablename__ = "alerts"
 
     id = Column(
         Integer,
@@ -22,22 +22,19 @@ class Log(Base):
         nullable=False
     )
 
-    event_type = Column(
+    alert_type = Column(
         String,
         nullable=False
-    )
-
-    username = Column(
-        String,
-        nullable=False
-    )
-
-    risk_score = Column(
-        Integer
     )
 
     severity = Column(
-        String
+        String,
+        nullable=False
+    )
+
+    description = Column(
+        String,
+        nullable=False
     )
 
     created_at = Column(
