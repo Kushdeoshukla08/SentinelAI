@@ -30,4 +30,4 @@ def get_current_user(
             detail="Invalid token"
         )
 
-    return payload
+    return payload   
