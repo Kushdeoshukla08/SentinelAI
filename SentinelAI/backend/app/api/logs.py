@@ -7,6 +7,7 @@ from app.core.database import get_db
 
 from app.models.log import Log
 from app.models.alert import Alert
+from app.models.incident import Incident
 
 from app.schemas.log import LogCreate
 
@@ -85,6 +86,14 @@ def upload_log(
                 )
 
                 db.add(new_alert)
+                db.commit()
+
+                new_incident = Incident(
+                    title="Brute Force Attack Detected",
+                    severity="critical"
+                )
+
+                db.add(new_incident)
                 db.commit()
 
                 alert_generated = True
