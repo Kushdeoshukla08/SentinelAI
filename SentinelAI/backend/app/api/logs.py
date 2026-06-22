@@ -119,4 +119,4 @@ def get_logs(
 
     logs = db.query(Log).all()
 
-    return logs
+    return logs     

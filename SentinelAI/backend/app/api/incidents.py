@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -9,6 +10,7 @@ from app.models.incident import Incident
 
 from app.schemas.incident import (
     IncidentCreate,
+    IncidentUpdate,
     IncidentResponse
 )
 
@@ -45,8 +47,39 @@ def get_incidents(
     db: Session = Depends(get_db)
 ):
 
-    incidents = db.query(
+    return db.query(
         Incident
     ).all()
 
-    return incidents
+
+@router.patch("/{incident_id}")
+def update_incident_status(
+    incident_id: int,
+    incident_update: IncidentUpdate,
+    db: Session = Depends(get_db)
+):
+
+    incident = (
+        db.query(Incident)
+        .filter(
+            Incident.id == incident_id
+        )
+        .first()
+    )
+
+    if not incident:
+        raise HTTPException(
+            status_code=404,
+            detail="Incident not found"
+        )
+
+    incident.status = incident_update.status
+
+    db.commit()
+    db.refresh(incident)
+
+    return {
+        "id": incident.id,
+        "title": incident.title,
+        "status": incident.status
+    }

@@ -6,6 +6,10 @@ class IncidentCreate(BaseModel):
     severity: str
 
 
+class IncidentUpdate(BaseModel):
+    status: str
+
+
 class IncidentResponse(BaseModel):
     id: int
     title: str
