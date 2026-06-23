@@ -37,6 +37,11 @@ class Incident(Base):
         nullable=True
     )
 
+    resolution_notes = Column(
+        String,
+        nullable=True
+    )
+
     created_at = Column(
         DateTime,
         default=datetime.utcnow

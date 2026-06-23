@@ -11,9 +11,10 @@ from app.models.incident import Incident
 from app.schemas.incident import (
     IncidentCreate,
     IncidentUpdate,
+    IncidentAssign,
+    IncidentResolve,
     IncidentResponse
 )
-
 
 router = APIRouter(
     prefix="/incidents",
@@ -82,4 +83,72 @@ def update_incident_status(
         "id": incident.id,
         "title": incident.title,
         "status": incident.status
+    }
+
+
+@router.patch("/{incident_id}/assign")
+def assign_incident(
+    incident_id: int,
+    assignment: IncidentAssign,
+    db: Session = Depends(get_db)
+):
+
+    incident = (
+        db.query(Incident)
+        .filter(
+            Incident.id == incident_id
+        )
+        .first()
+    )
+
+    if not incident:
+        raise HTTPException(
+            status_code=404,
+            detail="Incident not found"
+        )
+
+    incident.assigned_to = assignment.assigned_to
+
+    db.commit()
+    db.refresh(incident)
+
+    return {
+        "id": incident.id,
+        "title": incident.title,
+        "assigned_to": incident.assigned_to
+    }
+
+
+@router.patch("/{incident_id}/resolve")
+def resolve_incident(
+    incident_id: int,
+    resolution: IncidentResolve,
+    db: Session = Depends(get_db)
+):
+
+    incident = (
+        db.query(Incident)
+        .filter(
+            Incident.id == incident_id
+        )
+        .first()
+    )
+
+    if not incident:
+        raise HTTPException(
+            status_code=404,
+            detail="Incident not found"
+        )
+
+    incident.status = "resolved"
+    incident.resolution_notes = resolution.resolution_notes
+
+    db.commit()
+    db.refresh(incident)
+
+    return {
+        "id": incident.id,
+        "title": incident.title,
+        "status": incident.status,
+        "resolution_notes": incident.resolution_notes
     }
