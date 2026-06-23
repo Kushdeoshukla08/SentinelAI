@@ -72,3 +72,19 @@ td {
 tr:nth-child(even) {
   background: #293548;
 }
+
+.critical-badge {
+  background: #dc2626;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.status-badge {
+  background: #2563eb;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+}

@@ -10,19 +10,25 @@ function App() {
   });
 
   const [logs, setLogs] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [incidents, setIncidents] = useState([]);
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/dashboard/stats")
       .then((response) => response.json())
-      .then((data) => {
-        setStats(data);
-      });
+      .then((data) => setStats(data));
 
     fetch("http://127.0.0.1:8000/logs/")
       .then((response) => response.json())
-      .then((data) => {
-        setLogs(data);
-      });
+      .then((data) => setLogs(data));
+
+    fetch("http://127.0.0.1:8000/alerts/")
+      .then((response) => response.json())
+      .then((data) => setAlerts(data));
+
+    fetch("http://127.0.0.1:8000/incidents/")
+      .then((response) => response.json())
+      .then((data) => setIncidents(data));
   }, []);
 
   return (
@@ -75,6 +81,74 @@ function App() {
                 <td>{log.username}</td>
                 <td>{log.risk_score}</td>
                 <td>{log.severity}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="table-section">
+        <h2>Security Alerts</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Alert Type</th>
+              <th>Source IP</th>
+              <th>Severity</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {alerts.map((alert) => (
+              <tr key={alert.id}>
+                <td>{alert.id}</td>
+                <td>{alert.alert_type}</td>
+                <td>{alert.source_ip}</td>
+                <td>
+                  <span className="critical-badge">
+                    {alert.severity}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="table-section">
+        <h2>Incident Management</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Assigned To</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {incidents.map((incident) => (
+              <tr key={incident.id}>
+                <td>{incident.id}</td>
+                <td>{incident.title}</td>
+                <td>
+                  <span className="critical-badge">
+                    {incident.severity}
+                  </span>
+                </td>
+                <td>
+                  <span className="status-badge">
+                    {incident.status}
+                  </span>
+                </td>
+                <td>
+                  {incident.assigned_to || "Unassigned"}
+                </td>
               </tr>
             ))}
           </tbody>
