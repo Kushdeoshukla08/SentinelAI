@@ -51,7 +51,7 @@ jobs:
         run: alembic upgrade head
 
       - name: Run tests
-        run: pytest tests/ -v
+        run: python -m pytest tests/ -v
 
   frontend-build:
     runs-on: ubuntu-latest
