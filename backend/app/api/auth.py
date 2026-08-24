@@ -19,6 +19,8 @@ from app.schemas.user import UserLogin
 from app.schemas.user import UserResponse
 from app.schemas.user import Token
 
+from app.services.audit_service import log_audit
+
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
@@ -46,17 +48,28 @@ def register_user(
             detail="Email already registered"
         )
 
+    is_first_user = db.query(User).count() == 0
+
     new_user = User(
         id=str(uuid4()),
         name=user.name,
         email=user.email,
         password_hash=hash_password(user.password),
-        role="analyst"
+        role="admin" if is_first_user else "analyst"
     )
 
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    log_audit(
+        db,
+        actor_email=new_user.email,
+        action="USER_REGISTERED",
+        resource_type="user",
+        resource_id=new_user.id,
+        details=f"role={new_user.role}"
+    )
 
     return new_user
 
@@ -96,6 +109,14 @@ def login_user(
             "sub": existing_user.email,
             "role": existing_user.role
         }
+    )
+
+    log_audit(
+        db,
+        actor_email=existing_user.email,
+        action="USER_LOGIN",
+        resource_type="user",
+        resource_id=existing_user.id
     )
 
     return {

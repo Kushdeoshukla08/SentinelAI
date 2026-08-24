@@ -24,4 +24,22 @@ def get_current_user(
             detail="Invalid token"
         )
 
-    return payload   
+    return payload
+
+
+def require_role(*allowed_roles: str):
+
+    def role_checker(
+        current_user=Depends(get_current_user)
+    ):
+
+        if current_user.get("role") not in allowed_roles:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Insufficient permissions"
+            )
+
+        return current_user
+
+    return role_checker
