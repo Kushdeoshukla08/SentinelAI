@@ -107,6 +107,8 @@ function App() {
                 <th>Alert Type</th>
                 <th>Source IP</th>
                 <th>Severity</th>
+                <th>Status</th>
+                <th>Assigned To</th>
               </tr>
             </thead>
 
@@ -120,6 +122,14 @@ function App() {
                     <span className="critical-badge">
                       {alert.severity}
                     </span>
+                  </td>
+                  <td>
+                    <span className="status-badge">
+                      {alert.status}
+                    </span>
+                  </td>
+                  <td>
+                    {alert.assigned_to || "Unassigned"}
                   </td>
                 </tr>
               ))}

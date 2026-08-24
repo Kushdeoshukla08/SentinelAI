@@ -10,15 +10,6 @@ from app.api.incidents import router as incidents_router
 from app.api.mitre import router as mitre_router
 from app.api.audit import router as audit_router
 
-from app.core.database import Base
-from app.core.database import engine
-
-from app.models.user import User
-from app.models.log import Log
-from app.models.alert import Alert
-from app.models.incident import Incident
-from app.models.audit_log import AuditLog
-
 
 app = FastAPI(
     title="SentinelAI",
@@ -35,8 +26,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_router)
 app.include_router(users_router)
