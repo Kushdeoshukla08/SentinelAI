@@ -2,402 +2,103 @@
 
 ## Version
 
-v1.0
+v2.0 — reconciled with actual implementation (previous version described the originally planned stack, most of which was never built; see "Planned / Future" section below for what's still aspirational).
 
 ---
 
-# Technology Selection Philosophy
+# Current Implementation (as of Sprint 5)
 
-The SentinelAI stack is designed around:
+## Frontend
 
-* Scalability
-* Industry Adoption
-* AI Integration
-* Developer Productivity
-* Cloud Readiness
+* **Vite** + **React 19** (JSX, no TypeScript)
+* Hand-written CSS (no Tailwind, no Shadcn UI)
+* Plain `fetch()` calls to the backend, no API client library, no state management library, no router (single-page dashboard in `App.jsx`)
 
----
+## Backend
 
-# Frontend
+* **FastAPI**
+* **Python 3.13**
+* **SQLAlchemy** ORM
+* **Alembic** listed as a dependency but not yet used (no migrations directory / revisions exist — tables are created via `Base.metadata.create_all`)
+* **python-jose** for JWT encode/decode, **passlib[bcrypt]** for password hashing
 
-## Framework
+## Database
 
-Next.js 15
+* **PostgreSQL**, connected via `DATABASE_URL` in `backend/.env` (no Redis, no caching layer)
 
-Reason:
+## Security
 
-* Production Ready
-* Excellent Performance
-* Industry Adoption
-* TypeScript Support
+* JWT bearer auth (`core/security.py`, `core/dependencies.py`)
+* bcrypt password hashing
 
----
+## AI / ML
 
-## Language
+* **None implemented.** `openai`, `langchain`, `langgraph`, `qdrant-client`, `scikit-learn`, `numpy`, `pandas` are listed in `requirements.txt` but not imported or used anywhere in `backend/app`. Threat detection today is a single hardcoded rule (failed-login count threshold) in `services/risk_engine.py`, and MITRE mapping is a 3-entry hardcoded dictionary in `services/mitre_mapper.py`.
 
-TypeScript
+## Reporting
 
-Reason:
+* **None implemented.** `reportlab` is listed in `requirements.txt` but unused; `report_generator/` is an empty directory.
 
-* Type Safety
-* Better Maintainability
-* Enterprise Standard
+## Infrastructure
 
----
+* **None.** No Dockerfile, no docker-compose, no CI/CD config, no cloud deployment config exist anywhere in the repo.
 
-## Styling
+## Testing
 
-Tailwind CSS
-
-Reason:
-
-* Rapid Development
-* Consistent Design System
+* **None implemented.** `backend/tests/` contains only a README and a requirements file — zero test files.
 
 ---
 
-## Component Library
+# Planned / Future (not yet implemented — original stack plan)
 
-Shadcn UI
+These were part of the original technology plan and remain the intended direction, but nothing below exists in code yet. Treat this section as roadmap, not current state.
 
-Reason:
+## Frontend
 
-* Modern UI
-* Customizable
-* Professional Dashboard Design
-
----
-
-# Backend
-
-## Framework
-
-FastAPI
-
-Reason:
-
-* High Performance
-* Async Support
-* Excellent AI Integration
-* Automatic API Documentation
-
----
-
-## Language
-
-Python 3.12+
-
-Reason:
-
-* AI Ecosystem
-* ML Compatibility
-* Fast Development
-
----
-
-## ORM
-
-SQLAlchemy
-
-Reason:
-
-* Mature
-* Scalable
-* Widely Adopted
-
----
-
-## Database Migrations
-
-Alembic
-
-Reason:
-
-* Schema Version Control
-
----
-
-# Database
-
-## Primary Database
-
-PostgreSQL
-
-Reason:
-
-* ACID Compliance
-* Enterprise Adoption
-* Complex Query Support
-
----
+* Possible migration to Next.js 15 + TypeScript + Tailwind CSS + Shadcn UI once the feature set stabilizes
 
 ## Cache Layer
 
-Redis
+* Redis — session management, performance optimization
 
-Version 2
+## AI Layer
 
-Purpose:
+* LangGraph for agent workflows / multi-step reasoning
+* OpenAI API (GPT-4o) as the initial LLM provider, behind a provider abstraction (so Anthropic/local models can be swapped in)
+* Future local/open models (Llama, Mistral) as fallback providers
 
-* Session Management
-* Performance Optimization
+## Vector Database
 
----
+* Qdrant — for MITRE ATT&CK knowledge base, threat intelligence, and security playbook retrieval (RAG)
 
-# AI Layer
+## Machine Learning
 
-## LLM Framework
+* Scikit-learn (Isolation Forest, classification) for anomaly detection
+* PyTorch for future behavioral-analytics models
 
-LangGraph
+## Report Generation
 
-Reason:
+* ReportLab for PDF executive/incident reports
 
-* Agent Workflows
-* Multi-Step Reasoning
-* Future Agent Support
+## Containerization / Cloud
 
----
+* Docker for consistent local/dev environments
+* AWS (EC2, RDS, S3) for initial cloud deployment
+* Kubernetes for future scaling
 
-## LLM Provider (Development)
+## Monitoring
 
-OpenAI API
+* Prometheus + Grafana
+* ELK stack for centralized logging
 
-Initial Model:
+## Future Threat-Intel Integrations
 
-GPT-4o
-
-Reason:
-
-* Fast Development
-* Strong Reasoning
-
----
-
-## Future Models
-
-* Llama 3
-* Mistral
-* Self-Hosted Models
-
----
-
-# Vector Database
-
-## Technology
-
-Qdrant
-
-Reason:
-
-* Fast Similarity Search
-* RAG Integration
-* Open Source
-
-Purpose:
-
-* MITRE ATT&CK Knowledge Base
-* Threat Intelligence
-* Security Playbooks
-
----
-
-# Machine Learning
-
-## Core Libraries
-
-Scikit-learn
-
-Purpose:
-
-* Isolation Forest
-* Classification Models
-
----
-
-## Deep Learning
-
-PyTorch
-
-Purpose:
-
-* Behavioral Analytics
-* Future Neural Models
-
----
-
-## Data Processing
-
-Pandas
-
-NumPy
-
----
-
-# Security
-
-## Authentication
-
-JWT
-
-Purpose:
-
-* Secure API Access
-
----
-
-## Password Security
-
-bcrypt
-
-Purpose:
-
-* Password Hashing
-
----
-
-# Logging
-
-## Backend Logs
-
-Python Logging
-
----
-
-## Future
-
-ELK Stack
-
-Version 3
-
----
-
-# Report Generation
-
-## PDF Creation
-
-ReportLab
-
-Purpose:
-
-* Executive Reports
-* Incident Reports
-
----
-
-# Containerization
-
-Docker
-
-Reason:
-
-* Consistent Deployment
-* Environment Isolation
-
----
-
-# Cloud Infrastructure
-
-## Initial Deployment
-
-AWS
-
-Services:
-
-* EC2
-* RDS
-* S3
-
----
-
-## Future Infrastructure
-
-Kubernetes
-
-Reason:
-
-* Scaling
-* High Availability
+* CrowdStrike, Splunk, Microsoft Sentinel, AWS CloudTrail, VirusTotal, AbuseIPDB
 
 ---
 
 # Development Tools
 
-## IDE
-
-VS Code
-
----
-
-## Version Control
-
-Git
-
-GitHub
-
----
-
-## API Testing
-
-Postman
-
----
-
-# Monitoring
-
-Version 2
-
-Prometheus
-
-Grafana
-
----
-
-# Future Integrations
-
-* CrowdStrike
-* Splunk
-* Microsoft Sentinel
-* AWS CloudTrail
-* VirusTotal
-* AbuseIPDB
-
----
-
-# Final Stack Summary
-
-Frontend
-
-* Next.js
-* TypeScript
-* Tailwind
-* Shadcn
-
-Backend
-
-* FastAPI
-* SQLAlchemy
-* Alembic
-
-Database
-
-* PostgreSQL
-
-AI
-
-* LangGraph
-* OpenAI
-* Qdrant
-
-ML
-
-* Scikit-learn
-* PyTorch
-
-Infrastructure
-
-* Docker
-* AWS
-
-Version Control
-
-* GitHub
+* IDE: VS Code
+* Version Control: Git / GitHub
+* API Testing: Postman / FastAPI's built-in Swagger UI (`/docs`)
