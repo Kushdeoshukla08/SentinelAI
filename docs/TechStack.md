@@ -6,7 +6,13 @@ v2.0 — reconciled with actual implementation (previous version described the o
 
 ---
 
-# Current Implementation (as of Sprint 5)
+# Current Implementation
+
+Updated after the security/architecture pass and subsequent feature work
+(RBAC, audit logging, alert lifecycle, Alembic migrations, tests/CI, asset
+management, IOC/threat intel, AI analysis). The "Sprint 5" baseline this
+document originally described has moved on substantially - see git history
+for the specifics.
 
 ## Frontend
 
@@ -19,7 +25,7 @@ v2.0 — reconciled with actual implementation (previous version described the o
 * **FastAPI**
 * **Python 3.13**
 * **SQLAlchemy** ORM
-* **Alembic** listed as a dependency but not yet used (no migrations directory / revisions exist — tables are created via `Base.metadata.create_all`)
+* **Alembic** manages the schema (`backend/alembic/`) — `create_all` was removed from `main.py`; run `alembic upgrade head` after setup
 * **python-jose** for JWT encode/decode, **passlib[bcrypt]** for password hashing
 
 ## Database
@@ -30,10 +36,19 @@ v2.0 — reconciled with actual implementation (previous version described the o
 
 * JWT bearer auth (`core/security.py`, `core/dependencies.py`)
 * bcrypt password hashing
+* Role-based access control enforced server-side (`core/dependencies.require_role`) — admin/security_manager/analyst/viewer
+* Audit logging (`services/audit_service.py`, `audit_logs` table) on every security-sensitive action
+
+## Detection & Correlation
+
+* Rule-based: brute-force threshold (`services/risk_engine.py`) and IOC/IP indicator matching (`services/ioc_matcher.py`) against a real `iocs` table, wired into the log ingestion pipeline (`api/logs.py`)
+* MITRE mapping is still a 3-entry hardcoded dictionary in `services/mitre_mapper.py` — not yet a real ATT&CK dataset
+* Asset risk scoring (`services/asset_risk.py`) computed live from unresolved alerts on an asset's IP, not stored/stale
 
 ## AI / ML
 
-* **None implemented.** `openai`, `langchain`, `langgraph`, `qdrant-client`, `scikit-learn`, `numpy`, `pandas` are listed in `requirements.txt` but not imported or used anywhere in `backend/app`. Threat detection today is a single hardcoded rule (failed-login count threshold) in `services/risk_engine.py`, and MITRE mapping is a 3-entry hardcoded dictionary in `services/mitre_mapper.py`.
+* **Provider abstraction implemented** (`services/ai/`): `AIProvider` interface with a `LocalProvider` (deterministic, grounded in real alert/incident/log/IOC data — no external dependency, always available) and an `OpenAIProvider` (wraps the `openai` SDK, only activates if `OPENAI_API_KEY` is set, always falls back to the local result on any API error). `GET /ai/alerts/{id}/explain` and `GET /ai/incidents/{id}/explain` use whichever provider is configured.
+* `langchain`, `langgraph`, `qdrant-client`, `scikit-learn`, `pytorch` remain listed in `requirements.txt` but unused — no vector DB, no ML models, no agent framework yet.
 
 ## Reporting
 
@@ -41,11 +56,12 @@ v2.0 — reconciled with actual implementation (previous version described the o
 
 ## Infrastructure
 
-* **None.** No Dockerfile, no docker-compose, no CI/CD config, no cloud deployment config exist anywhere in the repo.
+* **CI**: `.github/workflows/ci.yml` — backend tests against a real Postgres service container + `alembic upgrade head`, frontend lint/build. Runs on every push/PR to `main`.
+* **No Docker** — no Dockerfile/docker-compose, no cloud deployment config.
 
 ## Testing
 
-* **None implemented.** `backend/tests/` contains only a README and a requirements file — zero test files.
+* **71+ tests** in `backend/tests/` (pytest + FastAPI `TestClient`, against a real disposable Postgres test database, not mocked) covering auth, RBAC, incidents, alerts, logs/detection pipeline, audit logging, assets, IOCs, and AI explanations.
 
 ---
 
