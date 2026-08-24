@@ -1,8 +1,12 @@
 import Sidebar from "./components/Sidebar";
+import Login from "./components/Login";
 import { useEffect, useState } from "react";
+import { apiFetch, getToken, clearToken } from "./api";
 import "./App.css";
 
 function App() {
+  const [authed, setAuthed] = useState(!!getToken());
+
   const [stats, setStats] = useState({
     total_logs: 0,
     total_alerts: 0,
@@ -16,30 +20,27 @@ function App() {
   const [incidents, setIncidents] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/dashboard/stats")
-      .then((response) => response.json())
-      .then((data) => setStats(data));
+    if (!authed) return;
 
-    fetch("http://127.0.0.1:8000/mitre/")
-      .then((response) => response.json())
-      .then((data) => setMitreTechniques(data));
+    apiFetch("/dashboard/stats").then(setStats).catch(() => {});
+    apiFetch("/mitre/").then(setMitreTechniques).catch(() => {});
+    apiFetch("/logs/").then(setLogs).catch(() => {});
+    apiFetch("/alerts/").then(setAlerts).catch(() => {});
+    apiFetch("/incidents/").then(setIncidents).catch(() => {});
+  }, [authed]);
 
-    fetch("http://127.0.0.1:8000/logs/")
-      .then((response) => response.json())
-      .then((data) => setLogs(data));
+  function handleLogout() {
+    clearToken();
+    setAuthed(false);
+  }
 
-    fetch("http://127.0.0.1:8000/alerts/")
-      .then((response) => response.json())
-      .then((data) => setAlerts(data));
-
-    fetch("http://127.0.0.1:8000/incidents/")
-      .then((response) => response.json())
-      .then((data) => setIncidents(data));
-  }, []);
+  if (!authed) {
+    return <Login onLogin={() => setAuthed(true)} />;
+  }
 
   return (
     <div className="layout">
-      <Sidebar />
+      <Sidebar onLogout={handleLogout} />
 
       <div className="dashboard">
         <h1>🛡️ SentinelAI SOC Dashboard</h1>

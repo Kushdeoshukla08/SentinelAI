@@ -1,4 +1,4 @@
-function Sidebar() {
+function Sidebar({ onLogout }) {
   return (
     <div className="sidebar">
       <h2>🛡 SentinelAI</h2>
@@ -9,8 +9,11 @@ function Sidebar() {
         <li>🚨 Alerts</li>
         <li>🛠 Incidents</li>
         <li>🎯 MITRE ATT&CK</li>
-        <li>📈 Analytics</li>
       </ul>
+
+      <button className="logout-btn" onClick={onLogout}>
+        🚪 Logout
+      </button>
     </div>
   );
 }
