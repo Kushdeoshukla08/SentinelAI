@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.dependencies import get_current_user
 
 from app.models.incident import Incident
 
@@ -28,7 +29,8 @@ router = APIRouter(
 )
 def create_incident(
     incident: IncidentCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     new_incident = Incident(
@@ -45,7 +47,8 @@ def create_incident(
 
 @router.get("/")
 def get_incidents(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     return db.query(
@@ -57,7 +60,8 @@ def get_incidents(
 def update_incident_status(
     incident_id: int,
     incident_update: IncidentUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     incident = (
@@ -90,7 +94,8 @@ def update_incident_status(
 def assign_incident(
     incident_id: int,
     assignment: IncidentAssign,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     incident = (
@@ -123,7 +128,8 @@ def assign_incident(
 def resolve_incident(
     incident_id: int,
     resolution: IncidentResolve,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     incident = (

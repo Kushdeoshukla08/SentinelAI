@@ -15,13 +15,7 @@ def get_current_user(
 
     token = credentials.credentials
 
-    print("TOKEN RECEIVED:")
-    print(token)
-
     payload = verify_token(token)
-
-    print("PAYLOAD:")
-    print(payload)
 
     if payload is None:
 

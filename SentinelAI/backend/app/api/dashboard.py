@@ -4,6 +4,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.dependencies import get_current_user
 
 from app.models.log import Log
 from app.models.alert import Alert
@@ -17,7 +18,8 @@ router = APIRouter(
 
 @router.get("/stats")
 def get_dashboard_stats(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     total_logs = db.query(Log).count()

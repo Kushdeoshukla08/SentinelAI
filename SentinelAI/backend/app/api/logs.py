@@ -4,6 +4,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.dependencies import get_current_user
 
 from app.models.log import Log
 from app.models.alert import Alert
@@ -26,7 +27,8 @@ router = APIRouter(
 @router.post("/upload")
 def upload_log(
     log: LogCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     risk_score, severity = calculate_risk(
@@ -114,7 +116,8 @@ def upload_log(
 
 @router.get("/")
 def get_logs(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     logs = db.query(Log).all()

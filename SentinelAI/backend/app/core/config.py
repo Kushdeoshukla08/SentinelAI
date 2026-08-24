@@ -1,8 +1,12 @@
 from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    SECRET_KEY: str = "sentinelai_super_secret_key_2026"
+    model_config = SettingsConfigDict(env_file=".env")
+
+    DATABASE_URL: str
+    SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
