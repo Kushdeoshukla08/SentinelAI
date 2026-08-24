@@ -8,6 +8,7 @@ function Sidebar({ onLogout }) {
         <li>📜 Logs</li>
         <li>🚨 Alerts</li>
         <li>🛠 Incidents</li>
+        <li>🖥 Assets</li>
         <li>🎯 MITRE ATT&CK</li>
       </ul>
 

@@ -8,11 +8,7 @@ from alembic import context
 from app.core.config import settings
 from app.core.database import Base
 
-from app.models.user import User
-from app.models.log import Log
-from app.models.alert import Alert
-from app.models.incident import Incident
-from app.models.audit_log import AuditLog
+import app.models  # noqa: F401 - populates Base.metadata for autogenerate
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

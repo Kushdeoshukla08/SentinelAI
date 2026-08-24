@@ -18,6 +18,7 @@ function App() {
   const [mitreTechniques, setMitreTechniques] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [incidents, setIncidents] = useState([]);
+  const [assets, setAssets] = useState([]);
 
   useEffect(() => {
     if (!authed) return;
@@ -27,6 +28,7 @@ function App() {
     apiFetch("/logs/").then(setLogs).catch(() => {});
     apiFetch("/alerts/").then(setAlerts).catch(() => {});
     apiFetch("/incidents/").then(setIncidents).catch(() => {});
+    apiFetch("/assets/").then(setAssets).catch(() => {});
   }, [authed]);
 
   function handleLogout() {
@@ -174,6 +176,46 @@ function App() {
             </tbody>
           </table>
                 </div>
+
+        <div className="table-section">
+          <h2>Asset Inventory</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Environment</th>
+                <th>Criticality</th>
+                <th>Status</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {assets.map((asset) => (
+                <tr key={asset.id}>
+                  <td>{asset.id}</td>
+                  <td>{asset.name}</td>
+                  <td>{asset.asset_type}</td>
+                  <td>{asset.environment}</td>
+                  <td>
+                    <span className="critical-badge">
+                      {asset.criticality}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="status-badge">
+                      {asset.status}
+                    </span>
+                  </td>
+                  <td>{asset.risk_score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <div className="table-section">
           <h2>MITRE ATT&CK Techniques</h2>

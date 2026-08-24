@@ -9,6 +9,7 @@ from app.api.dashboard import router as dashboard_router
 from app.api.incidents import router as incidents_router
 from app.api.mitre import router as mitre_router
 from app.api.audit import router as audit_router
+from app.api.assets import router as assets_router
 
 
 app = FastAPI(
@@ -35,6 +36,7 @@ app.include_router(dashboard_router)
 app.include_router(incidents_router)
 app.include_router(mitre_router)
 app.include_router(audit_router)
+app.include_router(assets_router)
 
 
 @app.get("/")

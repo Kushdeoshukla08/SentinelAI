@@ -12,11 +12,8 @@ from app.core.database import Base
 from app.core.database import get_db
 from app.main import app
 
-from app.models.user import User  # noqa: F401
-from app.models.log import Log  # noqa: F401
-from app.models.alert import Alert  # noqa: F401
-from app.models.incident import Incident  # noqa: F401
-from app.models.audit_log import AuditLog  # noqa: F401
+from app import models  # noqa: F401 - populates Base.metadata for create_all/drop_all
+from app.models import User
 
 
 def _with_db_name(url: str, db_name: str) -> str:
