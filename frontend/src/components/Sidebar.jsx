@@ -9,6 +9,7 @@ function Sidebar({ onLogout }) {
         <li>🚨 Alerts</li>
         <li>🛠 Incidents</li>
         <li>🖥 Assets</li>
+        <li>🕵 Threat Intel</li>
         <li>🎯 MITRE ATT&CK</li>
       </ul>
 

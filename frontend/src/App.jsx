@@ -19,6 +19,7 @@ function App() {
   const [alerts, setAlerts] = useState([]);
   const [incidents, setIncidents] = useState([]);
   const [assets, setAssets] = useState([]);
+  const [iocs, setIocs] = useState([]);
 
   useEffect(() => {
     if (!authed) return;
@@ -29,6 +30,7 @@ function App() {
     apiFetch("/alerts/").then(setAlerts).catch(() => {});
     apiFetch("/incidents/").then(setIncidents).catch(() => {});
     apiFetch("/assets/").then(setAssets).catch(() => {});
+    apiFetch("/iocs/").then(setIocs).catch(() => {});
   }, [authed]);
 
   function handleLogout() {
@@ -211,6 +213,46 @@ function App() {
                     </span>
                   </td>
                   <td>{asset.risk_score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="table-section">
+          <h2>Threat Intelligence (IOCs)</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Value</th>
+                <th>Source</th>
+                <th>Confidence</th>
+                <th>Severity</th>
+                <th>Active</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {iocs.map((ioc) => (
+                <tr key={ioc.id}>
+                  <td>{ioc.id}</td>
+                  <td>{ioc.ioc_type}</td>
+                  <td>{ioc.value}</td>
+                  <td>{ioc.source || "-"}</td>
+                  <td>{ioc.confidence}</td>
+                  <td>
+                    <span className="critical-badge">
+                      {ioc.severity}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="status-badge">
+                      {ioc.is_active ? "active" : "inactive"}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>

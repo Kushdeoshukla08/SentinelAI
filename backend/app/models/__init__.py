@@ -4,6 +4,7 @@ from app.models.alert import Alert
 from app.models.incident import Incident
 from app.models.audit_log import AuditLog
 from app.models.asset import Asset
+from app.models.ioc import IOC
 
 __all__ = [
     "User",
@@ -11,5 +12,6 @@ __all__ = [
     "Alert",
     "Incident",
     "AuditLog",
-    "Asset"
+    "Asset",
+    "IOC"
 ]
